@@ -1,0 +1,21 @@
+select reporting_month as "Reporting Month", 
+       program_unit_id as "Case Number",
+       case when program_unit_id > 0
+            then 'TEA'
+            else 'Work Pays'
+        end as "Program Category",
+        (select get_short_description(case_type)) as "Case Type",
+        (select get_short_description(processing_location))  as "Local Office",
+        case when case_participaton_reports.deferral_for_month = 'YES' 
+             then 'Deferred'
+             when case_participaton_reports.exempt_for_month = 'YES'
+             then 'Exempt'
+             when case_participaton_reports.existing_sanction_for_month = 'YES'
+             then 'Sanction'
+             end as "Deferred / Exempt / Sanction"
+    from case_participaton_reports 
+    where case_participaton_reports.reporting_month = to_char(date ('12/01/2018'), 'YYYYMM')
+        and (case_participaton_reports.deferral_for_month = 'YES' 
+            or case_participaton_reports.exempt_for_month = 'YES'
+            or case_participaton_reports.existing_sanction_for_month = 'YES'
+            )

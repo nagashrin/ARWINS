@@ -1,0 +1,32 @@
+All Family Rate
+
+select reporting_month, 
+    get_short_description(local_office) "LocalOffice", 
+    case when category = '20' then 'TEA'
+    else 'Work Pays'
+    end, 
+    (sum(nwork)*100 / (sum(nsamp) - sum(ndcard1) - sum(ndcard2) - sum(ndcard5) - sum(nchildo))) "AllFamilyRate" 
+    from t_worc_rate 
+ where reporting_month = '201901'   group by reporting_month, local_office, category
+    order by 1, 2, 3
+
+
+
+Two Parent
+
+select reporting_month, 
+    get_short_description(local_office) "LocalOffice", 
+    case when category = '20' then 'TEA'
+    else 'Work Pays'
+    end, 
+    sum(tpwork) "Working",
+    sum(tpsamp) "Total2parent",
+    sum(tpcard1) "Disregard",
+    sum(tpcard2) "Disregard",
+    sum(tpcard5)  "Disregard",
+    sum(tpdable)  "Disable"
+    --(sum(tpwork)*100 / (sum(tpsamp) - sum(tpcard1) - sum(tpcard2) - sum(tpcard5) - sum(tpdable))) "2ParentRate" 
+    from t_worc_rate
+    where reporting_month = '201901'
+    group by reporting_month, local_office, category
+    order by 1, 2, 3
